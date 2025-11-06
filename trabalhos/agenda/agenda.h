@@ -109,3 +109,4 @@ void listPeople(void *pBuffer);
 // aux functions
 void getDataSize(void *pBuffer);
 void findPersonByEmail(void *pBuffer);
+void clearMemory(void **pBuffer);

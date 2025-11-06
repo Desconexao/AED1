@@ -1,5 +1,7 @@
 #include "agenda.h"
 
+// TODO: commment all functions
+
 void getDataSize(void *pBuffer) {
     if (!pBuffer)
         return;
@@ -40,7 +42,19 @@ void findPersonByEmail(void *pBuffer) {
     }
 }
 
-// TODO: add people by name
+void clearMemory(void **pBuffer) {
+
+    if (pBuffer == NULL || *pBuffer == NULL)
+        return;
+
+    memset(*pBuffer, 0, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer));
+
+    free(*pBuffer);
+
+    *pBuffer = NULL;
+}
+
+// TODO: search all people with the same name???
 void addPerson(void **pBuffer) {
 
     getDataSize(*pBuffer);

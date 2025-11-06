@@ -34,15 +34,12 @@ int main() {
         case 4:
             listPeople(pBuffer);
             break;
-        case 5:
-            // clearMemmory(&pBuffer);
-            break;
         default:
             printf("\nIsn't a valid option... Try again.\n");
         }
     }
 
-    free(pBuffer);
+    clearMemory(&pBuffer);
 
     return 0;
 }
