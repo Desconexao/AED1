@@ -2,20 +2,50 @@
 #include <stdlib.h>
 #include <string.h>
 
-// SKETCH SIZES
-#define TEMP_NAME_SIZE 50
-#define TEMP_EMAIL_SIZE 50
+/*
+=================================================================
+==                      PBUFFER STRUCTURE                      ==
+=================================================================
+The pBuffer is divided into 3 blocks: [METADATA][DATA][SKETCH]
 
-// pBuffer [METADATA][DATA (people)](""stack"" [SKETCH])
+[METADATA] (Fixed Size - 5 Slots)
+  This is the only block that always exists. It holds:
+ 1. OPTION: The menu option.
+ 2. PEOPLE_COUNT: The total count of people.
+ 3. I: Our 'i' counter for loops.
+ 4. DATASIZE: The current size (in bytes) of the [DATA] block.
+ 5. PCURRENT: The "walking pointer" used to iterate over [DATA].
 
-// people = person(nameLen, name, age, emailLen, emailLen)
-// stack = temp_person(temp_nameLen, temp_name, temp_age, temp_emailLen,
-// temp_emailLen)
+[DATA] (Variable Size)
+ Where the people are stored. Each person has its exact size
+ (no wasted space).
+ Person Layout: [name_len][name...][age][email_len][email...]
+
+[SKETCH] (Dynamic Stack/Temporary)
+ The scratchpad block (for scanf and calculations). It is
+ allocated and deallocated at the END of the buffer (after [DATA])
+ only when needed (add, search, remove).
+=================================================================
+*/
 
 // NOTE: The stack is added when there is a need to insert data, and then
 // removed afterwards. There are many reallocs, which can be bad for
 // performance, but there are no unnecessary variables in the functions. I plan
 // to make some changes to this code yet
+
+// NOTE: TERMINAL
+#define C_RESET "\x1b[0m"
+// #define C_BOLD "\x1b[1m"
+#define C_RED "\x1b[31m"
+#define C_GREEN "\x1b[32m"
+#define C_YELLOW "\x1b[33m"
+#define C_BLUE "\x1b[34m"
+// #define C_MAGENTA "\x1b[35m"
+#define C_CYAN "\x1b[36m"
+
+// SKETCH SIZES
+#define TEMP_NAME_SIZE 50
+#define TEMP_EMAIL_SIZE 50
 
 // NOTE: METADATA MACROS
 

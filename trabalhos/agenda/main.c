@@ -6,7 +6,7 @@ int main() {
     pBuffer = malloc(METADATA_SIZE);
 
     if (!pBuffer) {
-        printf("Failed to allocate buffer.\n");
+        printf(C_RED "Failed to allocate buffer.\n" C_RESET);
         return 0;
     }
 
@@ -14,9 +14,10 @@ int main() {
 
     while (BUFFER_OPTION_VAL(pBuffer) != 5) {
         printf(
+            C_BLUE
             "\n1 - Add Person\n2 - Remove Person\n3 - Search Person\n4 - List "
-            "People\n5 - Exit\n");
-        printf("Choose an option: ");
+            "People\n5 - Exit\n" C_RESET);
+        printf("\nChoose an option: ");
         if (scanf(" %d", BUFFER_OPTION_PTR(pBuffer)) != 1) {
             BUFFER_OPTION_VAL(pBuffer) = 0;
         }
@@ -34,8 +35,10 @@ int main() {
         case 4:
             listPeople(pBuffer);
             break;
+        case 5:
+            break;
         default:
-            printf("\nIsn't a valid option... Try again.\n");
+            printf(C_YELLOW "\nIsn't a valid option... Try again.\n" C_RESET);
         }
     }
 

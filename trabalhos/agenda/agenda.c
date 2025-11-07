@@ -1,7 +1,10 @@
 #include "agenda.h"
 
-// TODO: commment all functions
-
+/*
+ * Sets 'BUFFER_DATASIZE_VAL' with the current size of the DATA, always making
+ * the program knows the real size of DATA.
+ * This is practically the most important function of the program
+ * */
 void getDataSize(void *pBuffer) {
     if (!pBuffer)
         return;
@@ -22,6 +25,10 @@ void getDataSize(void *pBuffer) {
     BUFFER_I_VAL(pBuffer) = 0;
 }
 
+/*
+ * Search for a person by email and set `BUFFER_PCURRENT_VAL` to point to that
+ * person.
+ */
 void findPersonByEmail(void *pBuffer) {
     BUFFER_I_VAL(pBuffer) = 0;
     BUFFER_OPTION_VAL(pBuffer) = 0;
@@ -42,6 +49,11 @@ void findPersonByEmail(void *pBuffer) {
     }
 }
 
+/*
+ * Set the entire buffer area to zero and free it.
+ * Also set the pointer to `NULL`.
+ * It should be called at the end of program.
+ * */
 void clearMemory(void **pBuffer) {
 
     if (pBuffer == NULL || *pBuffer == NULL)
@@ -55,6 +67,12 @@ void clearMemory(void **pBuffer) {
 }
 
 // TODO: search all people with the same name???
+
+/*
+ * Adds a person to the `end` of the DATA area.
+ * This allocates the size for the new person and then moves all the memory to
+ * the right, inserting the new person at the end of the DATA.
+ * */
 void addPerson(void **pBuffer) {
 
     getDataSize(*pBuffer);
@@ -62,7 +80,7 @@ void addPerson(void **pBuffer) {
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer) +
                                      SKETCH_SIZE);
     if (!*pBuffer) {
-        printf("Error allocating the stack\n");
+        printf(C_RED "Error allocating the stack\n" C_RESET);
         exit(1);
     }
 
@@ -90,7 +108,7 @@ void addPerson(void **pBuffer) {
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer) +
                                      SKETCH_SIZE + BUFFER_I_VAL(*pBuffer));
     if (!*pBuffer) {
-        printf("Realloc error 2.\n");
+        printf(C_RED "Realloc error 2.\n" C_RESET);
         exit(1);
     }
 
@@ -134,19 +152,24 @@ void addPerson(void **pBuffer) {
 
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer));
     if (!*pBuffer) {
-        printf("Error allocating a person\n");
+        printf(C_RED "Error allocating a person\n" C_RESET);
         exit(1);
     }
 
-    printf("\n> Person registered successfully <\n");
+    printf(C_GREEN "\n> Person registered successfully <\n" C_RESET);
 
     BUFFER_DATASIZE_VAL(*pBuffer) = 0;
     BUFFER_I_VAL(*pBuffer) = 0;
 }
 
+/*
+ * It searches for the person and moves the memory after them to the `left`,
+ * overwriting the person to be removed.
+ *
+ * */
 void removePerson(void **pBuffer) {
     if (BUFFER_PEOPLE_COUNT_VAL(*pBuffer) == 0) {
-        printf("\n>>> Theres no person to remove. <<<\n");
+        printf(C_YELLOW "\n>>> Theres no person to remove. <<<\n" C_RESET);
         return;
     }
 
@@ -155,7 +178,7 @@ void removePerson(void **pBuffer) {
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer) +
                                      SKETCH_SIZE);
     if (!*pBuffer) {
-        printf("Realloc error 1.\n");
+        printf(C_RED "Realloc error 1.\n" C_RESET);
         exit(1);
     }
 
@@ -168,7 +191,7 @@ void removePerson(void **pBuffer) {
     findPersonByEmail(*pBuffer);
 
     if (!BUFFER_OPTION_VAL(*pBuffer)) {
-        printf("\n>>> The person was not found. <<<\n");
+        printf(C_YELLOW "\n>>> The person was not found. <<<\n" C_RESET);
     } else {
 
         BUFFER_I_VAL(*pBuffer) =
@@ -185,7 +208,8 @@ void removePerson(void **pBuffer) {
                 BUFFER_PCURRENT_VAL(*pBuffer), BUFFER_DATASIZE_VAL(*pBuffer));
 
         BUFFER_PEOPLE_COUNT_VAL(*pBuffer)--;
-        printf("\n>>> The person was successfully removed. <<<\n");
+        printf(C_GREEN
+               "\n>>> The person was successfully removed. <<<\n" C_RESET);
     }
 
     getDataSize(*pBuffer);
@@ -193,7 +217,7 @@ void removePerson(void **pBuffer) {
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer));
 
     if (!*pBuffer) {
-        printf("Falha (realloc 3)\n");
+        printf(C_RED "Realloc error 2.\n" C_RESET);
         exit(1);
     }
 
@@ -202,9 +226,12 @@ void removePerson(void **pBuffer) {
     BUFFER_OPTION_VAL(*pBuffer) = 0;
 }
 
+/*
+ * Searches for a person by email and returns information about them.
+ * */
 void searchPerson(void **pBuffer) {
     if (BUFFER_PEOPLE_COUNT_VAL(*pBuffer) == 0) {
-        printf("\n>>> Theres no person to search. <<<\n");
+        printf(C_YELLOW "\n>>> Theres no person to search. <<<\n" C_RESET);
         return;
     }
 
@@ -212,7 +239,7 @@ void searchPerson(void **pBuffer) {
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer) +
                                      SKETCH_SIZE);
     if (!*pBuffer) {
-        printf("Realloc error 1.\n");
+        printf(C_RED "Realloc error 1.\n" C_RED);
         exit(1);
     }
     memset((char *)*pBuffer + METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer), 0,
@@ -224,21 +251,20 @@ void searchPerson(void **pBuffer) {
     findPersonByEmail(*pBuffer);
 
     if (BUFFER_OPTION_VAL(*pBuffer) == 0) {
-        printf("\n>>> The person was not found. <<<\n");
+        printf(C_YELLOW "\n>>> The person was not found. <<<\n" C_RESET);
     } else {
-        printf("--------- Person Found ---------\n");
-        printf("\tPerson: %d\n", BUFFER_I_VAL(*pBuffer) + 1);
-        printf("\tName: %s\n", CURRENT_NAME_PTR(BUFFER_PCURRENT_VAL(*pBuffer)));
-        printf("\tAge: %d\n",
+        printf(C_CYAN "--------- Person Found ---------\n" C_RESET);
+        printf("PERSON: %d\n", BUFFER_I_VAL(*pBuffer) + 1);
+        printf("\tAGE: %d\n",
                *(CURRENT_AGE_PTR(BUFFER_PCURRENT_VAL(*pBuffer))));
-        printf("\tEmail: %s\n",
+        printf("\tEMAIL: %s\n",
                CURRENT_EMAIL_PTR(BUFFER_PCURRENT_VAL(*pBuffer)));
-        printf("--------------------------------\n");
+        printf(C_CYAN "--------------------------------\n" C_RESET);
     }
 
     *pBuffer = realloc(*pBuffer, METADATA_SIZE + BUFFER_DATASIZE_VAL(*pBuffer));
     if (!*pBuffer) {
-        printf("Realloc error 2.\n");
+        printf(C_RED "Realloc error 2.\n" C_RED);
         exit(1);
     }
 
@@ -247,15 +273,18 @@ void searchPerson(void **pBuffer) {
     BUFFER_OPTION_VAL(*pBuffer) = 0;
 }
 
+/*
+ * Lists all information for all people
+ * */
 void listPeople(void *pBuffer) {
     if (BUFFER_PEOPLE_COUNT_VAL(pBuffer) == 0) {
-        printf("\n>>> The are no people to list. <<<\n");
+        printf(C_YELLOW "\n>>> The are no people to list. <<<\n" C_RESET);
         return;
     }
 
     BUFFER_I_VAL(pBuffer) = 0;
     BUFFER_PCURRENT_VAL(pBuffer) = BUFFER_PEOPLE_PTR(pBuffer);
-    printf("----------- PEOPLE ----------\n");
+    printf(C_CYAN "----------- PEOPLE ----------\n" C_RESET);
 
     while (BUFFER_I_VAL(pBuffer) < BUFFER_PEOPLE_COUNT_VAL(pBuffer)) {
         printf("PERSON: %d\n", BUFFER_I_VAL(pBuffer) + 1);
@@ -267,7 +296,7 @@ void listPeople(void *pBuffer) {
         BUFFER_I_VAL(pBuffer)++;
         printf("\n");
     }
-    printf("--------- END PEOPLE ---------\n");
+    printf(C_CYAN "--------- END PEOPLE ---------\n" C_RESET);
 
     BUFFER_I_VAL(pBuffer) = 0;
     printf("\n");
